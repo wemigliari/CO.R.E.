@@ -10,14 +10,14 @@ library(xlsx)
 library(dplyr)
 
 
-countries <- read.xlsx("/Users/wemigliari/Documents/Pós-Doutorado & Doutorado/Pós-Doc/UOC/Project/Tables/notes_file_procurement_transparency.xlsx",
-                       sheetName ="Network 2")
+countries <- read.xlsx("/Users/wemigliari/Documents/Pós-Doutorado & Doutorado/Pós-Doc/UOC/Project/Tables/data_variables_R.xlsx",
+                       sheetName ="Variables")
 
 library(reshape2)
 test <- melt(countries, variable.name = "values", value.name = "weight")
 
 
-corruption <- read.xlsx("/Users/wemigliari/Documents/Pós-Doutorado & Doutorado/Pós-Doc/UOC/Project/Tables/notes_file_procurement_transparency.xlsx",
+corruption <- read.xlsx("/Users/wemigliari/Documents/Pós-Doutorado & Doutorado/Pós-Doc/UOC/Project/Tables/data_variables_R.xlsx",
                         sheetName ="WP-Compendium")
 corruption$destination2 <- NULL
 corruption$weight <- NULL
@@ -30,7 +30,7 @@ corruption_country <- merge(corruption, test, by="destination")
 austria <- filter(corruption_country, values == "Austria")
 
 origin <- paste0(austria$source)
-destination <- paste0(austria$destination, " ",austria$weight)
+destination <- paste0(austria$destination, " ", austria$weight)
 data <- data.frame(origin, destination)
 
 # Transform input data in a adjacency matrix
@@ -42,22 +42,39 @@ library(circlize)
 # Make the circular plot
 
 set.seed(12345)
-grid.col <- setNames(rainbow(length(unlist(dimnames(data)))), union(rownames(data), colnames(data)))
+#grid.col <- setNames(rainbow(length(unlist(dimnames(data)))), union(rownames(data), colnames(data)))
 
-par(mar = c(2, 2, 2, 2), cex=0.7)
-circos.par(track.margin=c(0,0))
+color_table <- read.xlsx("/Users/wemigliari/Documents/Pós-Doutorado & Doutorado/Pós-Doc/UOC/Project/Tables/data_variables_R.xlsx",
+                       sheetName ="Color")
+color <- as.character(color_table$Color)
+
+par(mai=c(0.5,0.1,0.5,0.1), cex=0.7)
+circos.par(track.margin=c(1,1))
 circos.clear()
-circos.par(start.degree = 90)
+#circos.par(start.degree = 90)
 chordDiagram(adjacencyData, transparency = 0.3, annotationTrack = "grid", 
-             annotationTrackHeight = mm_h(c(3, 2)),
-             preAllocateTracks = 1, grid.col = grid.col)
+             annotationTrackHeight = mm_h(c(1, 1)),
+             preAllocateTracks = 1, 
+             grid.col = color)
 circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
   xlim = get.cell.meta.data("xlim")
   ylim = get.cell.meta.data("ylim")
   sector.name = get.cell.meta.data("sector.index")
-  circos.text(mean(xlim), ylim[1] + .089, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 1))
+  circos.text(mean(xlim), ylim[1] + .069, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 1))
   #circos.axis(h = "top", labels.cex = 0.07, major.tick.percentage = 0.07, sector.index = sector.name, track.index = 1)
 }, bg.border = NA)
+
+
+legend_corr <- read.xlsx("/Users/wemigliari/Documents/Pós-Doutorado & Doutorado/Pós-Doc/UOC/Project/Tables/notes_file_procurement_transparency.xlsx",
+                           sheetName ="Legend")
+
+label_legend <- paste0(legend_corr$Code, " -> ", legend_corr$Source)
+
+library(raster)
+legend_corr <- as.character(legend_corr$Color)
+legend(1.2, 1, legend=label_legend, cex=0.9, box.lty=0, 
+       text.col="black",
+       y.intersp=0.5,x.intersp=0.3)
 
 #### Belgium
 
@@ -241,13 +258,13 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 
 
 
-#### Denmark
 
+#### Denmark
 
 denmark <- filter(corruption_country, values == "Denmark")
 
 origin <- paste0(denmark$source)
-destination <- paste0(denmark$destination, " ",denmark$weight)
+destination <- paste0(denmark$destination, " ", denmark$weight)
 data <- data.frame(origin, destination)
 
 # Transform input data in a adjacency matrix
@@ -259,22 +276,40 @@ library(circlize)
 # Make the circular plot
 
 set.seed(12345)
-grid.col <- setNames(rainbow(length(unlist(dimnames(data)))), union(rownames(data), colnames(data)))
+#grid.col <- setNames(rainbow(length(unlist(dimnames(data)))), union(rownames(data), colnames(data)))
 
-par(mar = c(2, 2, 2, 2), cex=0.7)
-circos.par(track.margin=c(0,0))
+color_table <- read.xlsx("/Users/wemigliari/Documents/Pós-Doutorado & Doutorado/Pós-Doc/UOC/Project/Tables/notes_file_procurement_transparency.xlsx",
+                         sheetName ="Color")
+color <- as.character(color_table$Color)
+
+par(mai=c(0.5,0.1,0.5,0.1), cex=0.7)
+circos.par(track.margin=c(1,1))
 circos.clear()
-circos.par(start.degree = 90)
+#circos.par(start.degree = 90)
 chordDiagram(adjacencyData, transparency = 0.3, annotationTrack = "grid", 
-             annotationTrackHeight = mm_h(c(3, 2)),
-             preAllocateTracks = 1, grid.col = grid.col)
+             annotationTrackHeight = mm_h(c(1, 1)),
+             preAllocateTracks = 1, 
+             grid.col = color)
 circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
   xlim = get.cell.meta.data("xlim")
   ylim = get.cell.meta.data("ylim")
   sector.name = get.cell.meta.data("sector.index")
-  circos.text(mean(xlim), ylim[1] + .089, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 1))
+  circos.text(mean(xlim), ylim[1] + .069, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 1))
   #circos.axis(h = "top", labels.cex = 0.07, major.tick.percentage = 0.07, sector.index = sector.name, track.index = 1)
 }, bg.border = NA)
+
+
+legend_corr <- read.xlsx("/Users/wemigliari/Documents/Pós-Doutorado & Doutorado/Pós-Doc/UOC/Project/Tables/notes_file_procurement_transparency.xlsx",
+                         sheetName ="Legend")
+
+label_legend <- paste0(legend_corr$Code, " -> ", legend_corr$Source)
+
+library(raster)
+legend_corr <- as.character(legend_corr$Color)
+legend(1.2, 1, legend=label_legend, cex=0.9, box.lty=0, 
+       text.col="black",
+       y.intersp=0.5,x.intersp=0.3)
+
 
 
 #### Estonia
@@ -1002,6 +1037,8 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 
 ########
 
+
+
 sources <- corruption_country %>%
   distinct(source) %>%
   rename(label = source)
@@ -1019,9 +1056,9 @@ nodes <- nodes %>% rowid_to_column("id")
 nodes
 
 
-per_route <- corruption_country %>%  
+per_route <- corruption %>%  
   group_by(source, destination) %>%
-  summarise(weight = weight) %>% 
+  summarise(weight = n()) %>% 
   ungroup()
 per_route
 
@@ -1037,57 +1074,26 @@ edges <- edges %>%
 edges <- select(edges, from, to, weight)
 edges
 
-routes_tidy <- tbl_graph(nodes = nodes, edges = edges, directed = TRUE)
-
-routes_tidy %>% 
-  activate(edges) %>% 
-  arrange(desc(weight))
-
-library(tidygraph)
-library(ggraph)
-
-routes_tidy <- tbl_graph(nodes = nodes, edges = edges, directed = TRUE)
-
-
-routes_tidy %>% 
-  activate(edges) %>% 
-  arrange(desc(weight))
-
-ggraph(routes_tidy) + 
-  geom_edge_link(aes(width = weight), alpha = 0.3, color="#708090") + 
-  geom_node_point() + 
-  scale_edge_width(range = c(0.2, 2)) +
-  geom_node_text(aes(label = label), repel = TRUE) +
-  geom_node_point(color="#2F4F4F") +
-  theme_graph()
-
-set.seed(12345)
-
-ggraph(routes_tidy, layout='graphopt') + 
-  geom_node_point(color="#2F4F4F") +
-  geom_edge_link(aes(width = weight), alpha = 0.3, color="#708090") + 
-  scale_edge_width(range = c(0.2, 1)) +
-  geom_node_text(aes(label = label), repel = TRUE) +
-  labs(edge_width = "Values") +
-  labs(x ="", y = "Points",
-       subtitle = "Network of the Austrian e-procurement website",
-       caption = "Source: CO.R.E. Elaborado por W. Migliari, 2022.") +
-  theme_graph()
-
 
 library(networkD3)
 nodes_d3 <- mutate(nodes, id = id - 1)
 edges_d3 <- mutate(edges, from = from - 1, to = to - 1)
 
+edges_d3 <- data.frame(edges_d3)
+nodes_d3 <- data.frame(nodes_d3)
 
-my_color <- 'd3.scaleOrdinal() .domain(["a", "b"]) .range(["#69b3a2", "steelblue"])'
+# Add a 'group' column to each connection:
+edges_d3$group <- as.factor(c(data$origin))
+
+# Add a 'group' column to each node. Here I decide to put all of them in the same group to make them grey
+nodes_d3$group <- as.factor(c("variable"))
+
+my_color <- 'd3.scaleOrdinal() .domain(["edges_d3$group", "nodes_d3$group "]) .range(["#69b3a2", "steelblue"])'
 
 sankeyNetwork(Links = edges_d3, Nodes = nodes_d3, 
               Source = "from", Target = "to", 
-              NodeID = "label", Value = "weight", 
-              fontSize = 13, unit = "Corruption")
-
-library(tidygraph)
-library(ggraph)
+              Value = "weight", NodeID = "label",
+              fontSize = 12, unit = "Corruption",
+              colourScale=my_color, LinkGroup="group", NodeGroup="group")
 
 
