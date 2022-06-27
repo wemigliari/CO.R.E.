@@ -1,7 +1,6 @@
 library(igraph)
 library(readxl)
 library(ggplot2)
-library(dplyr)
 library(hrbrthemes)
 library(extrafont)
 library(RColorBrewer)
@@ -42,10 +41,10 @@ edges <- per_route %>%
   rename(from = id)
 
 edges <- edges %>% 
-  left_join(nodes, by = c("destination" = "label")) %>% 
+  left_join(nodes, by = c("destination2" = "label")) %>% 
   rename(to = id)
 
-edges <- select(edges, from, to, weight)
+edges <- dplyr::select(edges, from, to, weight)
 edges
 
 library(network)
@@ -111,20 +110,33 @@ library(networkD3)
 nodes_d3 <- mutate(nodes, id = id - 1)
 edges_d3 <- mutate(edges, from = from - 1, to = to - 1)
 
+legend_corr
+#my_color <- 'd3.scaleOrdinal() .domain(["Availability", "Availability", "Availability", "Availability", "Availability", "Interoperability", "Re-Usability"]) 
+#.range(["#3a9ffb", "#cbe5fd", "#A8C8C8", "#72ABB3", "#4897A9", "#01779E", "#044E84",
+#"#cbe5fd", "#3a9ffb", "#3a9ffb", "#3a9ffb", "#cbe5fd", "#cbe5fd", "#cbe5fd",
+#"#cbe5fd", "#A8C8C8", "#A8C8C8", "#A8C8C8", "#A8C8C8", "#A8C8C8", "#72ABB3",
+#"#72ABB3", "#72ABB3", "#72ABB3", "#72ABB3", "#72ABB3", "#4897A9", "#4897A9",
+#"#4897A9", "#4897A9", "#4897A9", "#4897A9", "#01779E", "#01779E", "#01779E",
+#"#01779E", "#01779E", "#01779E", "#01779E", "#01779E", "#044E84", "#044E84", "#044E84", "#044E84"])'
 
-my_color <- 'd3.scaleOrdinal() .domain(["a", "b"]) .range(["#69b3a2", "steelblue"])'
+my_color <- 'd3.scaleOrdinal() .domain(["Availability/Accessibility - Completeness",
+"Availability/Accessibility - Easy Access", "Availability/Accessibility - Understandabiilty", 
+"Availability/Quality", "Availability/Openness","Interoperability", "Re-Usability"]) .range(["#69b3a2", "steelblue", "grey", "gold", "green",
+"gold","gold","gold","gold","gold","gold","gold","gold","gold","gold","gold","gold","gold",
+"green", "green", "green", "green", "green", "green",
+"#69b3a2","#69b3a2","#69b3a2","#69b3a2","#69b3a2", "#69b3a2",
+"steelblue", "steelblue", "steelblue", "steelblue", "steelblue", "steelblue", "steelblue", "steelblue", 
+"gray", "gray", "gray", "gray", "gray"])'
+
+
+my_color <- 'd3.scaleOrdinal() .domain(["a", "b"]) .range(["#69b3a2"])'
 
 sankeyNetwork(Links = edges_d3, Nodes = nodes_d3, 
               Source = "from", Target = "to", 
               NodeID = "label", Value = "weight", 
-              fontSize = 13, unit = "Corruption")
+              fontSize = 13, unit = "Corruption",
+              colourScale= my_color
+              )
 
-
-
-
-
-
-
-
-
-
+dev.off()
+#####
